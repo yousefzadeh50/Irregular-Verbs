@@ -1,1 +1,228 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Irregular Verbs Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Poppins',sans-serif;min-height:100vh;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:white;overflow-x:hidden}
+        .bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;overflow:hidden}
+        .bg span{position:absolute;width:20px;height:20px;background:rgba(255,255,255,0.05);border-radius:50%;animation:float 25s linear infinite;bottom:-150px}
+        .bg span:nth-child(1){left:10%;width:80px;height:80px;animation-duration:20s}
+        .bg span:nth-child(2){left:20%;animation-delay:2s;animation-duration:12s}
+        .bg span:nth-child(3){left:40%;width:60px;height:60px;animation-duration:15s}
+        .bg span:nth-child(4){left:70%;animation-duration:18s}
+        .bg span:nth-child(5){left:80%;width:110px;height:110px;animation-delay:3s;animation-duration:22s}
+        .bg span:nth-child(6){left:35%;width:150px;height:150px;animation-delay:7s;animation-duration:30s}
+        @keyframes float{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(-1000px) rotate(720deg);opacity:0}}
+        .container{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:15px}
+        .header{text-align:center;padding:15px}
+        .game-title{font-size:2.5rem;font-weight:900;background:linear-gradient(45deg,#ff6b6b,#feca57,#48dbfb,#ff9ff3,#54a0ff,#5f27cd);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:g 4s ease infinite;margin-bottom:5px}
+        @keyframes g{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+        .subtitle{color:#a29bfe;font-size:0.85rem;letter-spacing:2px;margin-bottom:3px}
+        .prospect{color:#74b9ff;font-size:0.75rem;margin-bottom:8px}
+        .designer{font-family:'Segoe UI',Tahoma,serif;font-size:0.95rem;font-weight:700;background:linear-gradient(90deg,#ff6b6b,#feca57,#1dd1a1,#48dbfb,#a29bfe,#ff9ff3);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:rainbow 3s linear infinite;text-shadow:0 0 20px rgba(162,155,254,0.5);padding:8px 15px;border:2px solid rgba(162,155,254,0.3);border-radius:15px;display:inline-block}
+        @keyframes rainbow{0%{background-position:0% center}100%{background-position:200% center}}
+        .score-board{display:flex;justify-content:center;gap:15px;margin:10px 0;flex-wrap:wrap}
+        .score-item{background:rgba(255,255,255,0.1);border-radius:15px;padding:8px 20px;text-align:center;min-width:80px}
+        .score-label{font-size:0.6rem;color:#a29bfe;text-transform:uppercase;letter-spacing:1px}
+        .score-value{font-size:1.5rem;font-weight:800}
+        .score-value.c{color:#1dd1a1}.score-value.w{color:#ff6b6b}.score-value.s{color:#feca57}
+        .progress-bar{width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;margin:8px 0}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);transition:width 0.5s}
+        .progress-text{text-align:center;color:#a29bfe;font-size:0.75rem}
+        .mode-selector{display:flex;justify-content:center;gap:8px;margin:12px 0;flex-wrap:wrap}
+        .mode-btn{padding:8px 15px;border:2px solid rgba(255,255,255,0.2);border-radius:50px;font-family:Poppins,sans-serif;font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.3s;background:rgba(255,255,255,0.1);color:white}
+        .mode-btn:hover{background:rgba(162,155,254,0.3);transform:translateY(-2px)}
+        .mode-btn.active{background:linear-gradient(135deg,#667eea,#764ba2);border-color:#a29bfe;transform:scale(1.05)}
+        .game-area{background:rgba(255,255,255,0.05);border-radius:25px;padding:25px;margin:10px auto;max-width:650px;text-align:center}
+        .question-verb{font-size:2.5rem;font-weight:900;margin:12px 0;animation:fadeIn 0.4s;background:linear-gradient(45deg,#fff,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .question-meaning{color:#ffeaa7;font-size:0.95rem;font-style:italic;margin-bottom:15px}
+        .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+        .option-btn{padding:12px 18px;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);border-radius:12px;color:white;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.3s}
+        .option-btn:hover{background:rgba(162,155,254,0.2);border-color:#a29bfe;transform:translateY(-2px)}
+        .option-btn.correct{background:rgba(29,217,161,0.3);border-color:#1dd1a1}
+        .option-btn.wrong{background:rgba(255,107,107,0.3);border-color:#ff6b6b;animation:shake 0.4s}
+        @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+        .answer-input{width:100%;max-width:400px;padding:12px 18px;font-size:1.1rem;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);border-radius:12px;color:white;text-align:center;outline:none}
+        .answer-input:focus{border-color:#a29bfe}
+        .submit-btn,.next-btn{padding:10px 30px;font-size:0.9rem;font-weight:700;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:50px;color:white;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:1px;margin-top:12px}
+        .submit-btn:hover,.next-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(102,126,234,0.4)}
+        .feedback{padding:12px;border-radius:12px;margin:12px 0;font-weight:600;display:none}
+        .feedback.show{display:block}
+        .feedback.correct{background:rgba(29,217,161,0.15);border:2px solid #1dd1a1;color:#1dd1a1}
+        .feedback.wrong{background:rgba(255,107,107,0.15);border:2px solid #ff6b6b;color:#ff6b6b}
+        .flashcard-wrapper{width:100%;max-width:500px;min-height:320px;margin:20px auto;perspective:1200px}
+        .flashcard{width:100%;height:320px;position:relative;transform-style:preserve-3d;transition:transform 0.8s cubic-bezier(0.175,0.885,0.32,1.275);cursor:pointer}
+        .flashcard:hover{transform:scale(1.02)}
+        .flashcard.flipped{transform:rotateY(180deg)}
+        .flashcard-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:25px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+        .flashcard-front{background:linear-gradient(145deg,#667eea 0%,#764ba2 50%,#f093fb 100%);border:3px solid rgba(255,255,255,0.3)}
+        .flashcard-back{background:linear-gradient(145deg,#11998e 0%,#38ef7d 50%,#1dd1a1 100%);border:3px solid rgba(255,255,255,0.3);transform:rotateY(180deg)}
+        .flashcard-verb{font-size:3rem;font-weight:900;color:white;text-shadow:0 4px 15px rgba(0,0,0,0.3);margin-bottom:15px;letter-spacing:2px}
+        .flashcard-meaning{font-size:1.3rem;color:rgba(255,255,255,0.9);font-style:italic;margin-bottom:20px}
+        .flashcard-hint{font-size:0.85rem;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:2px;animation:pulse 2s ease-in-out infinite}
+        @keyframes pulse{0%,100%{opacity:0.7}50%{opacity:1}}
+        .flashcard-answer{font-size:2.5rem;font-weight:900;color:white;text-shadow:0 4px 15px rgba(0,0,0,0.3);margin-bottom:10px}
+        .flashcard-label{font-size:0.9rem;color:rgba(255,255,255,0.8);text-transform:uppercase;letter-spacing:3px;margin-bottom:15px}
+        .flashcard-meaning-back{font-size:1.1rem;color:rgba(255,255,255,0.9);font-style:italic}
+        .flashcard-nav{display:flex;justify-content:center;gap:12px;margin-top:15px}
+        .flashcard-nav-btn{padding:8px 18px;border:2px solid rgba(255,255,255,0.2);border-radius:50px;background:rgba(255,255,255,0.08);color:white;font-weight:600;cursor:pointer;transition:all 0.3s}
+        .flashcard-nav-btn:hover{background:rgba(162,155,254,0.3)}
+        .flashcard-counter{font-size:0.85rem;color:#a29bfe;margin-top:10px}
+        .matching-container{display:flex;gap:30px;justify-content:center;margin:12px 0;flex-wrap:wrap}
+        .matching-col{display:flex;flex-direction:column;gap:6px;min-width:160px}
+        .matching-header{font-size:0.7rem;color:#a29bfe;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;text-align:center}
+        .matching-item{padding:10px 15px;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);border-radius:10px;color:white;font-weight:600;cursor:pointer;transition:all 0.3s;text-align:center;font-size:0.9rem}
+        .matching-item:hover:not(.matched){background:rgba(162,155,254,0.2);border-color:#a29bfe}
+        .matching-item.selected{background:rgba(162,155,254,0.4);border-color:#a29bfe;box-shadow:0 0 15px rgba(162,155,254,0.4)}
+        .matching-item.matched{background:rgba(29,217,161,0.2);border-color:#1dd1a1;cursor:default}
+        .matching-item.wrong{animation:shake 0.4s;border-color:#ff6b6b}
+        .memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:500px;margin:12px auto}
+        .memory-card{aspect-ratio:1;perspective:1000px;cursor:pointer}
+        .memory-card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.6s}
+        .memory-card.flipped .memory-card-inner{transform:rotateY(180deg)}
+        .memory-card-front,.memory-card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
+        .memory-card-front{background:linear-gradient(135deg,#667eea,#764ba2);font-size:1.3rem}
+        .memory-card-back{background:linear-gradient(135deg,#f093fb,#f5576c);border:2px solid rgba(255,255,255,0.3);transform:rotateY(180deg);font-size:0.9rem;padding:5px}
+        .memory-card.matched .memory-card-back{background:linear-gradient(135deg,#1dd1a1,#38ef7d);border-color:#1dd1a1}
+        .end-screen h2{font-size:2rem;margin-bottom:10px}
+        .end-screen .final-score{font-size:3rem;font-weight:900;background:linear-gradient(45deg,#feca57,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:15px 0}
+        .end-screen .score-message{color:#a29bfe;margin-bottom:20px}
+        .restart-btn{padding:10px 30px;font-size:0.9rem;font-weight:700;background:linear-gradient(135deg,#ff6b6b,#f5576c);border:none;border-radius:50px;color:white;cursor:pointer;text-transform:uppercase;letter-spacing:1px;margin:8px}
+        .restart-btn:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(255,107,107,0.4)}
+        .confetti{position:fixed;top:-10px;z-index:1000;animation:confettiFall 3s linear forwards;pointer-events:none}
+        @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+        .celebration{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;z-index:1000;background:rgba(0,0,0,0.85)}
+        .celebration-content{text-align:center;animation:zoomIn 0.5s}
+        @keyframes zoomIn{from{transform:scale(0)}to{transform:scale(1)}}
+        .celebration h2{font-size:2.5rem;margin-bottom:15px}
+        .celebration p{color:#a29bfe;font-size:1.1rem}
+        .review-table{width:100%;max-width:600px;margin:15px auto;border-collapse:collapse}
+        .review-table th{background:rgba(162,155,254,0.3);padding:10px;color:#a29bfe;font-size:0.8rem;text-transform:uppercase}
+        .review-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:0.85rem}
+        .review-table tr:nth-child(even){background:rgba(255,255,255,0.03)}
+        .review-table .correct-row td{color:#1dd1a1}
+        .review-table .wrong-row td{color:#ff6b6b}
+        @media(max-width:768px){.game-title{font-size:1.8rem}.question-verb{font-size:2rem}.options-grid{grid-template-columns:1fr}.memory-grid{grid-template-columns:repeat(3,1fr)}.matching-container{flex-direction:column;align-items:center}.flashcard-verb{font-size:2.2rem}.flashcard-answer{font-size:2rem}.flashcard{height:280px}.flashcard-wrapper{min-height:280px}}
+    </style>
+</head>
+<body>
+    <div class="bg"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="container">
+        <div class="header">
+            <h1 class="game-title">Irregular Verbs</h1>
+            <p class="subtitle">Educational Game</p>
+            <p class="prospect">Prospect 3 - Lesson 6</p>
+            <p class="designer">عبدالرسول یوسف زاده | دبیر زبان انگلیسی شهرستان خواف | استان خراسان رضوی</p>
+        </div>
+        <div class="score-board">
+            <div class="score-item"><div class="score-label">Score</div><div class="score-value" id="score">0</div></div>
+            <div class="score-item"><div class="score-label">Correct</div><div class="score-value c" id="correct">0</div></div>
+            <div class="score-item"><div class="score-label">Wrong</div><div class="score-value w" id="wrong">0</div></div>
+            <div class="score-item"><div class="score-label">Streak</div><div class="score-value s" id="streak">0</div></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="progress-text" id="progressText">Question 0 / 0</div>
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="setMode('quiz')">🎯 Quiz</button>
+            <button class="mode-btn" onclick="setMode('type')">⌨️ Type</button>
+            <button class="mode-btn" onclick="setMode('flashcard')">📚 Card</button>
+            <button class="mode-btn" onclick="setMode('matching')">🔗 Match</button>
+            <button class="mode-btn" onclick="setMode('memory')">🧠 Memory</button>
+        </div>
+        <div class="game-area" id="gameArea"></div>
+    </div>
+    <script>
+        const verbs=[
+            {v1:"be",v2:"was/were",meaning:"بودن"},
+            {v1:"become",v2:"became",meaning:"شدن"},
+            {v1:"bleed",v2:"bled",meaning:"خونریزی کردن"},
+            {v1:"break",v2:"broke",meaning:"شکستن"},
+            {v1:"bring",v2:"brought",meaning:"آوردن"},
+            {v1:"build",v2:"built",meaning:"ساختن"},
+            {v1:"buy",v2:"bought",meaning:"خریدن"},
+            {v1:"choose",v2:"chose",meaning:"انتخاب کردن"},
+            {v1:"come",v2:"came",meaning:"آمدن"},
+            {v1:"cut",v2:"cut",meaning:"بریدن"},
+            {v1:"do",v2:"did",meaning:"انجام دادن"},
+            {v1:"draw",v2:"drew",meaning:"کشیدن"},
+            {v1:"drink",v2:"drank",meaning:"نوشیدن"},
+            {v1:"drive",v2:"drove",meaning:"رانندگی کردن"},
+            {v1:"eat",v2:"ate",meaning:"خوردن"},
+            {v1:"fall",v2:"fell",meaning:"افتادن"},
+            {v1:"feed",v2:"fed",meaning:"غذا دادن"},
+            {v1:"feel",v2:"felt",meaning:"احساس کردن"},
+            {v1:"find",v2:"found",meaning:"پیدا کردن"},
+            {v1:"forget",v2:"forgot",meaning:"فراموش کردن"},
+            {v1:"get",v2:"got",meaning:"گرفتن"},
+            {v1:"give",v2:"gave",meaning:"دادن"},
+            {v1:"go",v2:"went",meaning:"رفتن"},
+            {v1:"have",v2:"had",meaning:"داشتن"},
+            {v1:"hear",v2:"heard",meaning:"شنیدن"},
+            {v1:"hit",v2:"hit",meaning:"زدن"},
+            {v1:"hurt",v2:"hurt",meaning:"آسیب زدن"},
+            {v1:"keep",v2:"kept",meaning:"نگه داشتن"},
+            {v1:"know",v2:"knew",meaning:"دانستن"},
+            {v1:"leave",v2:"left",meaning:"ترک کردن"},
+            {v1:"lose",v2:"lost",meaning:"از دست دادن"},
+            {v1:"make",v2:"made",meaning:"ساختن"},
+            {v1:"meet",v2:"met",meaning:"ملاقات کردن"},
+            {v1:"pay",v2:"paid",meaning:"پرداخت کردن"},
+            {v1:"put",v2:"put",meaning:"گذاشتن"},
+            {v1:"read",v2:"read",meaning:"خواندن"},
+            {v1:"ride",v2:"rode",meaning:"سوار شدن"},
+            {v1:"run",v2:"ran",meaning:"دویدن"},
+            {v1:"say",v2:"said",meaning:"گفتن"},
+            {v1:"see",v2:"saw",meaning:"دیدن"},
+            {v1:"set",v2:"set",meaning:"تنظیم کردن"},
+            {v1:"sell",v2:"sold",meaning:"فروختن"},
+            {v1:"send",v2:"sent",meaning:"فرستادن"},
+            {v1:"sing",v2:"sang",meaning:"خواندن آواز"},
+            {v1:"sit",v2:"sat",meaning:"نشستن"},
+            {v1:"sleep",v2:"slept",meaning:"خوابیدن"},
+            {v1:"speak",v2:"spoke",meaning:"صحبت کردن"},
+            {v1:"stand",v2:"stood",meaning:"ایستادن"},
+            {v1:"stick",v2:"stuck",meaning:"چسباندن"},
+            {v1:"swim",v2:"swam",meaning:"شنا کردن"},
+            {v1:"take",v2:"took",meaning:"گرفتن"},
+            {v1:"take off",v2:"took off",meaning:"پرواز کردن"},
+            {v1:"teach",v2:"taught",meaning:"آموزش دادن"},
+            {v1:"tell",v2:"told",meaning:"گفتن"},
+            {v1:"think",v2:"thought",meaning:"فکر کردن"},
+            {v1:"understand",v2:"understood",meaning:"فهمیدن"},
+            {v1:"wake",v2:"woke",meaning:"بیدار شدن"},
+            {v1:"wear",v2:"wore",meaning:"پوشیدن"},
+            {v1:"write",v2:"wrote",meaning:"نوشتن"}
+        ];
+        const correctSound=new Audio('https://dl4.fara-download.ir/audio/sound_effect/alarms/answer/Correct%20Answer%20sfx%202.mp3');
+        const wrongSound=new Audio('https://dl4.fara-download.ir/2025/12/week-1/Incorrect_Answer3.mp3');
+        let mode='quiz',score=0,correct=0,wrong=0,streak=0,currentQ=0,shuffled=[],questions=[],flashcardIdx=0,matchSelected=[],matchMatched=[],matchQuestions=[],memoryFlipped=[],memoryMatched=[],memoryPairs=[],userAnswers=[];
+        function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+        function init(){shuffled=shuffle([...verbs]);questions=shuffled.slice(0,15);userAnswers=[];score=0;correct=0;wrong=0;streak=0;currentQ=0;render()}
+        function setMode(m){mode=m;currentQ=0;score=0;correct=0;wrong=0;streak=0;flashcardIdx=0;matchSelected=[];matchMatched=[];memoryFlipped=[];memoryMatched=[];userAnswers=[];document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');if(m==='matching'){matchQuestions=shuffle([...verbs]).slice(0,8)}if(m==='memory'){setupMemory()}render()}
+        function playSound(isCorrect){try{if(isCorrect){correctSound.currentTime=0;correctSound.play()}else{wrongSound.currentTime=0;wrongSound.play()}}catch(e){}}
+        function updateScore(){document.getElementById('score').textContent=score;document.getElementById('correct').textContent=correct;document.getElementById('wrong').textContent=wrong;document.getElementById('streak').textContent=streak}
+        function updateProgress(q,total){document.getElementById('progressFill').style.width=(q/total*100)+'%';document.getElementById('progressText').textContent=`Question ${q} / ${total}`}
+        function createConfetti(){for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'%';c.style.background=`hsl(${Math.random()*360},80%,60%)`;c.style.width=Math.random()*12+5+'px';c.style.height=c.style.width;c.style.animationDelay=Math.random()*2+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),3500)}}
+        function showCelebration(pass,totalCorrect,totalWrong){const percent=totalCorrect+totalWrong>0?Math.round(totalCorrect/(totalCorrect+totalWrong)*100):0;let html='<div class="celebration"><div class="celebration-content">';if(pass){html+=`<h2 style="color:#1dd1a1">🎉 Congratulations! 🎉</h2><p>You passed with ${percent}% correct!</p>`}else{html+=`<h2 style="color:#ff6b6b">Try Again!</h2><p>You got ${percent}% - Need 70% to pass</p>`}html+=`<p style="margin:10px 0">Correct: <span style="color:#1dd1a1">${totalCorrect}</span> | Wrong: <span style="color:#ff6b6b">${totalWrong}</span></p>`;if(userAnswers.length>0){html+=`<div style="text-align:left;max-width:500px;margin:15px auto;max-height:200px;overflow-y:auto"><table class="review-table"><tr><th>Base</th><th>Your Answer</th><th>Correct</th></tr>`;userAnswers.forEach(a=>{const rowClass=a.isCorrect?'correct-row':'wrong-row';html+=`<tr class="${rowClass}"><td>${a.v1}</td><td>${a.userAnswer}</td><td>${a.correctAnswer}</td></tr>`});html+='</table></div>'}html+='<button class="restart-btn" onclick="this.parentElement.parentElement.remove();init()">Play Again</button></div></div>';document.body.insertAdjacentHTML('beforeend',html);if(pass)createConfetti()}
+        function render(){const area=document.getElementById('gameArea');if(mode==='quiz')renderQuiz(area);else if(mode==='type')renderType(area);else if(mode==='flashcard')renderFlashcard(area);else if(mode==='matching')renderMatching(area);else if(mode==='memory')renderMemory(area)}
+        function renderQuiz(area){if(currentQ>=questions.length){const pass=correct/(correct+wrong)>=0.7;showCelebration(pass,correct,wrong);return}const q=questions[currentQ];const others=shuffle(shuffled.filter(v=>v.v1!==q.v1).slice(0,3));const options=shuffle([q,...others]);updateProgress(currentQ+1,questions.length);area.innerHTML=`<div class="question-verb">${q.v1}</div><div class="question-meaning">${q.meaning}</div><div class="options-grid">${options.map(o=>`<button class="option-btn" onclick="checkQuiz(this,'${o.v2.replace(/'/g,"\\'")}','${q.v2.replace(/'/g,"\\'")}','${q.v1.replace(/'/g,"\\'")}')">${o.v2}</button>`).join('')}</div>`}
+        function checkQuiz(btn,selected,correctV,v1){const btns=document.querySelectorAll('.option-btn');btns.forEach(b=>b.disabled=true);const isCorrect=selected===correctV;userAnswers.push({v1:v1,userAnswer:selected,correctAnswer:correctV,isCorrect:isCorrect});if(isCorrect){btn.classList.add('correct');btns.forEach(b=>{if(b.textContent===correctV)b.classList.add('correct')});score+=10+streak*2;correct++;streak++;playSound(true)}else{btn.classList.add('wrong');btns.forEach(b=>{if(b.textContent===correctV)b.classList.add('correct')});wrong++;streak=0;playSound(false)}updateScore();setTimeout(()=>{currentQ++;render()},1200)}
+        function renderType(area){if(currentQ>=questions.length){const pass=correct/(correct+wrong)>=0.7;showCelebration(pass,correct,wrong);return}const q=questions[currentQ];updateProgress(currentQ+1,questions.length);area.innerHTML=`<div class="question-verb">${q.v1}</div><div class="question-meaning">${q.meaning}</div><div class="options-grid" style="grid-template-columns:1fr"><input type="text" class="answer-input" id="typeInput" placeholder="Type past simple..." onkeypress="if(event.key==='Enter')checkType()"></div><button class="submit-btn" onclick="checkType()">Submit</button><div class="feedback" id="feedback"></div>`;document.getElementById('typeInput').focus()}
+        function checkType(){const input=document.getElementById('typeInput');const feedback=document.getElementById('feedback');const q=questions[currentQ];const ans=input.value.trim().toLowerCase();const correctAns=q.v2.toLowerCase();const isCorrect=ans===correctAns;userAnswers.push({v1:q.v1,userAnswer:input.value.trim()||'(empty)',correctAnswer:q.v2,isCorrect:isCorrect});if(isCorrect){feedback.className='feedback show correct';feedback.textContent='✓ Correct!';score+=10+streak*2;correct++;streak++;playSound(true)}else{feedback.className='feedback show wrong';feedback.textContent=`✗ Wrong! The answer is: ${q.v2}`;wrong++;streak=0;playSound(false)}updateScore();setTimeout(()=>{currentQ++;input.value='';render()},1500)}
+        function renderFlashcard(area){updateProgress(flashcardIdx+1,shuffled.length);const v=shuffled[flashcardIdx];area.innerHTML=`<div class="flashcard-wrapper"><div class="flashcard" id="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-face flashcard-front"><div class="flashcard-verb">${v.v1}</div><div class="flashcard-meaning">${v.meaning}</div><div class="flashcard-hint">↓ Click to reveal ↓</div></div><div class="flashcard-face flashcard-back"><div class="flashcard-label">Past Simple</div><div class="flashcard-answer">${v.v2}</div><div class="flashcard-meaning-back">${v.meaning}</div></div></div></div><div class="flashcard-nav"><button class="flashcard-nav-btn" onclick="event.stopPropagation();flashcardIdx=Math.max(0,flashcardIdx-1);render()">◀ Prev</button><button class="flashcard-nav-btn" onclick="event.stopPropagation();flashcardIdx=Math.min(shuffled.length-1,flashcardIdx+1);render()">Next ▶</button></div><div class="flashcard-counter">Card ${flashcardIdx+1} of ${shuffled.length}</div>`}
+        function renderMatching(area){updateProgress(matchMatched.length/2,matchQuestions.length);const verbs2=matchQuestions.map(v=>v.v1);const answers2=shuffle(matchQuestions.map(v=>v.v2));area.innerHTML=`<div class="matching-container"><div class="matching-col"><div class="matching-header">Base Form</div>${verbs2.map((v,i)=>`<div class="matching-item" data-verb="${v}" onclick="selectMatch(this,'verb')">${v}</div>`).join('')}</div><div class="matching-col"><div class="matching-header">Past Simple</div>${answers2.map((a,i)=>`<div class="matching-item" data-answer="${a}" onclick="selectMatch(this,'answer')">${a}</div>`).join('')}</div></div>`}
+        function selectMatch(el,type){if(el.classList.contains('matched'))return;if(type==='verb'){document.querySelectorAll('.matching-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected');matchSelected[0]=el}else{if(!document.querySelector('.matching-item.selected'))return;el.classList.add('selected');matchSelected[1]=el;const verb=matchSelected[0].dataset.verb;const answer=el.dataset.answer;const correctAnswer=matchQuestions.find(v=>v.v1===verb).v2;const isCorrect=answer===correctAnswer;if(isCorrect){matchSelected[0].classList.add('matched');matchSelected[0].classList.remove('selected');el.classList.add('matched');el.classList.remove('selected');matchMatched.push(verb,answer);score+=15+streak*2;correct++;streak++;playSound(true)}else{el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),500);matchSelected[0].classList.remove('selected');wrong++;streak=0;playSound(false)}matchSelected=[];updateScore();if(matchMatched.length/2>=matchQuestions.length){setTimeout(()=>{const pass=correct/(correct+wrong)>=0.7;showCelebration(pass,correct,wrong)},500)}}}
+        function setupMemory(){const selected=shuffle([...verbs]).slice(0,8);const cards=[];selected.forEach(v=>{cards.push({text:v.v1,pairId:v.v1,cardType:'v1'});cards.push({text:v.v2,pairId:v.v1,cardType:'v2'})});memoryPairs=shuffle(cards);memoryFlipped=[];memoryMatched=[]}
+        function renderMemory(area){updateProgress(memoryMatched.length/2,memoryPairs.length/2);area.innerHTML=`<div class="memory-grid">${memoryPairs.map((p,i)=>`<div class="memory-card" data-index="${i}" onclick="flipCard(${i})"><div class="memory-card-inner"><div class="memory-card-front">?</div><div class="memory-card-back">${p.text}</div></div></div>`).join('')}</div>`}
+        function flipCard(idx){const cards=document.querySelectorAll('.memory-card');if(cards[idx].classList.contains('flipped')||cards[idx].classList.contains('matched'))return;if(memoryFlipped.length===2)return;cards[idx].classList.add('flipped');memoryFlipped.push(idx);if(memoryFlipped.length===2){const [i1,i2]=memoryFlipped;const p1=memoryPairs[i1],p2=memoryPairs[i2];if(p1.pairId===p2.pairId&&p1.cardType!==p2.cardType){cards[i1].classList.add('matched');cards[i2].classList.add('matched');memoryMatched.push(i1,i2);score+=20+streak*2;correct++;streak++;playSound(true);updateScore();if(memoryMatched.length===memoryPairs.length){setTimeout(()=>{const pass=correct/(correct+wrong)>=0.7;showCelebration(pass,correct,wrong)},500)}}else{wrong++;streak=0;playSound(false);updateScore();setTimeout(()=>{cards[i1].classList.remove('flipped');cards[i2].classList.remove('flipped')},800)}memoryFlipped=[]}}
+        init();
+    </script>
+</body>
+</html>
+
